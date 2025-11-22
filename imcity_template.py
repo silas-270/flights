@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass, asdict
+from requests.exceptions import ReadTimeout
 from enum import StrEnum
 from functools import cached_property
 from threading import Thread
@@ -219,18 +220,21 @@ class SSEThread(Thread):
             "Authorization": self.bearer,
             "Accept": "text/event-stream; charset=utf-8",
         }
+        try:
+            self._http_stream = requests.get(
+                self.url, stream=True, headers=headers, timeout=30
+            )
+            self._client = sseclient.SSEClient(self._http_stream)
 
-        self._http_stream = requests.get(
-            self.url, stream=True, headers=headers, timeout=30
-        )
-        self._client = sseclient.SSEClient(self._http_stream)
-
-        for event in self._client.events():
-            if event.event == "order":
-                self._handle_orderbook_change(json.loads(event.data))
-            elif event.event == "trade":
-                self._handle_trade_event(json.loads(event.data))
-
+            for event in self._client.events():
+                if event.event == "order":
+                    self._handle_orderbook_change(json.loads(event.data))
+                elif event.event == "trade":
+                    self._handle_trade_event(json.loads(event.data))
+        except ReadTimeout:
+            print(f"⚠️ Connection timed out (30s) - SSE stream could not start.")
+            # Optionally: Set stream to None or handle the retry logic here
+            self._http_stream = None
 
 class BaseBot(ABC):
     username: str
@@ -320,6 +324,23 @@ class BaseBot(ABC):
             thread.join()
 
         return responses
+    
+    def clear_orders_for_product(self, product_symbol: str) -> None:
+        """
+        Retrieves all active orders and cancels those matching the specific product symbol.
+        """
+        # 1. Fetch all current orders for the user
+        orders = self.request_all_orders()
+
+        # Guard clause: if the request failed or returned no orders
+        if not orders:
+            return
+
+        # 2. Filter and cancel
+        for order in orders:
+            # Check if the order belongs to the target product
+            if order.get("product") == product_symbol:
+                self.cancel_order_by_id(order["id"])
 
     def request_all_orders(self) -> list[dict] | None:
         url = f"{self._cmi_url}/api/order/current-user"

@@ -1,84 +1,98 @@
 import schedule
-import time
+import logging
+
+# --- 1. Setup Logging Configuration ---
+logging.basicConfig(
+    level=logging.INFO,  # Change to logging.DEBUG to see "No Action" logs
+    format='%(asctime)s | %(levelname)-8s | %(message)s',
+    datefmt='%H:%M:%S'
+)
+logger = logging.getLogger("TradingBot")
 
 from imcity_template import BaseBot, OrderBook, OrderRequest, Side
 from src.fetch.main import fetch_schedule
 from src.indicators.markets import price5, price6
-from util import add_to_series
-
-market5_estimate = None
-market6_estimate = None
 
 def calculate_expected_prices():
-    arrivals = fetch_schedule(is_arrival=True)
-    departures = fetch_schedule(is_arrival=False)
+    try:
+        arrivals = fetch_schedule(is_arrival=True)
+        departures = fetch_schedule(is_arrival=False)
 
-    global market5_estimate
-    market5_estimate = price5(arrivals, departures)
+        global m5_fair_value
+        m5_fair_value = price5(arrivals, departures)
 
-    global market6_estimate
-    market6_estimate = price6(arrivals, departures)
+        global m6_fair_value
+        m6_fair_value = price6(arrivals, departures)
 
-    print("New estimated price for market 5:", market5_estimate)
-    print("New estimated price for market 6:", market6_estimate)
+        # Clear visual separator for price updates
+        logger.info(f"{'-'*15} PRICE UPDATE {'-'*15}")
+        logger.info(f"Est M5 (Flights): {m5_fair_value}")
+        logger.info(f"Est M6 (Airport): {m6_fair_value}")
 
-    if market5_estimate is not None and market6_estimate is not None:
-        add_to_series(market5_estimate, market6_estimate)
-
-print(20 * "-", "Script Started", 20 * "-")
-# calculate_expected_prices()
-
-# schedule.every(3).minutes.do(calculate_expected_prices)
-print("Scheduler started. Press Ctrl+C to stop.")
+    except Exception as e:
+        logger.error(f"Error calculating prices: {e}")
 
 class CustomBot(BaseBot):
 
-    # Handler for own trades
     def on_trades(self, trades: list[dict]):
-        for trade in trades:
-            print(f"{trade['volume']} @ {trade['price']}")
+        return
 
-    # Handler für Orderbuch-Updates
     def on_orderbook(self, orderbook: OrderBook):
-        if orderbook.product == '5_Flights' and market5_estimate is not None:
-            my_bid_price = market5_estimate * 0.9
-            my_ask_price = market5_estimate * 1.1  
+        product = orderbook.product
+        if not product == '5_Flights' and not product == '6_Airports':
+            return
+        fair_value = m5_fair_value if product == '5_Flights' else m6_fair_value
 
-            print("Place buy at", my_bid_price, "and sell at", my_ask_price)
+        if not orderbook.buy_orders or not orderbook.sell_orders:
+            return
 
-            self.send_order(OrderRequest(product=orderbook.product, 
-                                     price=my_bid_price, 
-                                     volume=1, 
-                                     side=Side.BUY))
+        best_bid = orderbook.buy_orders[0]
+        best_ask = orderbook.sell_orders[0]
+
+        if best_bid.price >= best_ask.price:
+            return
+
+        spread = 0.008
+        mid = (best_bid.price + best_ask.price) / 2
+        mean_price = (mid + fair_value) / 2
+
+        # Clear old Orders before making new ones
+        self.clear_orders_for_product(product)
+
+        # Open new Orders
+        price = round(mean_price * ((1 + spread) if fair_value > mean_price else (1 - spread)))
+        order = OrderRequest(product=orderbook.product,
+                             price=price,
+                             volume=1,
+                             side=(Side.BUY if fair_value > mean_price else Side.SELL)
+                             )
         
-            self.send_order(OrderRequest(product=orderbook.product, 
-                                        price=my_ask_price, 
-                                        volume=1, 
-                                        side=Side.SELL))
-        elif orderbook.product == '6_Airport' and market6_estimate is not None:
-            my_bid_price = market6_estimate * 0.9
-            my_ask_price = market6_estimate * 1.1  
+        print(f"Fair: {fair_value}, Mean: {mean_price} -> {"Buy" if fair_value > mean_price else "Sell"} at {price}")
+            
+        self.send_order(order)
 
-            print("Place buy at", my_bid_price, "and sell at", my_ask_price)
-
-            self.send_order(OrderRequest(product=orderbook.product, 
-                                     price=my_bid_price, 
-                                     volume=1, 
-                                     side=Side.BUY))
-        
-            self.send_order(OrderRequest(product=orderbook.product, 
-                                        price=my_ask_price, 
-                                        volume=1, 
-                                        side=Side.SELL))
+m5_fair_value = None 
+m6_fair_value = None
 
 try:
-    bot = CustomBot("http://ec2-52-31-108-187.eu-west-1.compute.amazonaws.com/", "Die Market-Macher eV.", "MarketMacherTUM!")
-    bot.start()
+    print("\n")
+    logger.info(f"{'='*10} BOT INITIALIZATION {'='*10}")
+    
+    calculate_expected_prices()
+    schedule.every(3).minutes.do(calculate_expected_prices)
+    
+    logger.info("Scheduler started.")
 
+    market_bot = CustomBot("http://ec2-18-203-201-148.eu-west-1.compute.amazonaws.com", "Die Market-Macher eV.", "MarketMacherTUM!")
+    market_bot.start()
+
+    logger.info("Bot connected. Monitoring streams...")
+    
     while True:
-        #schedule.run_pending()
-        time.sleep(1)
+        schedule.run_pending()
+        pass
 
 except KeyboardInterrupt:
-    bot.stop()
-    print("\nScript stopped.")
+    market_bot.stop()
+    print("\n")
+    logger.info("🛑 Script stopped by user.")

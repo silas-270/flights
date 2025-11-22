@@ -3,5 +3,175 @@
         "timestamp": "2025-11-22T09:28:21.187455",
         "market5_estimate": 2700,
         "market6_estimate": 671
+    },
+    {
+        "timestamp": "2025-11-22T09:31:52.099924",
+        "market5_estimate": 2700,
+        "market6_estimate": 681
+    },
+    {
+        "timestamp": "2025-11-22T09:40:26.011682",
+        "market5_estimate": 2700,
+        "market6_estimate": 680
+    },
+    {
+        "timestamp": "2025-11-22T09:43:41.363541",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T09:46:58.675560",
+        "market5_estimate": 2700,
+        "market6_estimate": 670
+    },
+    {
+        "timestamp": "2025-11-22T09:50:15.268363",
+        "market5_estimate": 2700,
+        "market6_estimate": 670
+    },
+    {
+        "timestamp": "2025-11-22T09:53:32.181468",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T09:56:49.817144",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T10:00:14.750072",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T10:03:30.698608",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T10:06:46.734144",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T10:10:06.916558",
+        "market5_estimate": 2700,
+        "market6_estimate": 670
+    },
+    {
+        "timestamp": "2025-11-22T10:13:49.874431",
+        "market5_estimate": 2700,
+        "market6_estimate": 670
+    },
+    {
+        "timestamp": "2025-11-22T10:29:20.178832",
+        "market5_estimate": 2700,
+        "market6_estimate": 673
+    },
+    {
+        "timestamp": "2025-11-22T10:32:37.525966",
+        "market5_estimate": 2700,
+        "market6_estimate": 671
+    },
+    {
+        "timestamp": "2025-11-22T10:35:53.975774",
+        "market5_estimate": 2700,
+        "market6_estimate": 671
+    },
+    {
+        "timestamp": "2025-11-22T10:39:10.735975",
+        "market5_estimate": 2700,
+        "market6_estimate": 671
+    },
+    {
+        "timestamp": "2025-11-22T10:42:30.744541",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T10:45:48.966754",
+        "market5_estimate": 2700,
+        "market6_estimate": 678
+    },
+    {
+        "timestamp": "2025-11-22T11:10:15.939887",
+        "market5_estimate": 2700,
+        "market6_estimate": 696
+    },
+    {
+        "timestamp": "2025-11-22T11:13:58.690415",
+        "market5_estimate": 2700,
+        "market6_estimate": 696
+    },
+    {
+        "timestamp": "2025-11-22T11:19:51.905898",
+        "market5_estimate": 2700,
+        "market6_estimate": 696
+    },
+    {
+        "timestamp": "2025-11-22T11:23:53.363544",
+        "market5_estimate": 2700,
+        "market6_estimate": 696
+    },
+    {
+        "timestamp": "2025-11-22T11:32:26.562992",
+        "market5_estimate": 2700,
+        "market6_estimate": 699
+    },
+    {
+        "timestamp": "2025-11-22T11:36:48.195613",
+        "market5_estimate": 2700,
+        "market6_estimate": 699
+    },
+    {
+        "timestamp": "2025-11-22T11:38:46.854696",
+        "market5_estimate": 2700,
+        "market6_estimate": 699
+    },
+    {
+        "timestamp": "2025-11-22T12:12:12.843387",
+        "market5_estimate": 2700,
+        "market6_estimate": 693
+    },
+    {
+        "timestamp": "2025-11-22T12:18:32.770247",
+        "market5_estimate": 2700,
+        "market6_estimate": 666
+    },
+    {
+        "timestamp": "2025-11-22T12:29:45.684293",
+        "market5_estimate": 2700,
+        "market6_estimate": 661
+    },
+    {
+        "timestamp": "2025-11-22T12:31:18.738307",
+        "market5_estimate": 2700,
+        "market6_estimate": 661
+    },
+    {
+        "timestamp": "2025-11-22T12:43:49.682941",
+        "market5_estimate": 2700,
+        "market6_estimate": 668
+    },
+    {
+        "timestamp": "2025-11-22T12:49:04.804303",
+        "market5_estimate": 2700,
+        "market6_estimate": 669
+    },
+    {
+        "timestamp": "2025-11-22T12:51:54.862951",
+        "market5_estimate": 2700,
+        "market6_estimate": 669
+    },
+    {
+        "timestamp": "2025-11-22T13:15:02.763729",
+        "market5_estimate": 2700,
+        "market6_estimate": 660
+    },
+    {
+        "timestamp": "2025-11-22T13:17:18.534175",
+        "market5_estimate": 2700,
+        "market6_estimate": 658
     }
 ]
