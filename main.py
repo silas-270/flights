@@ -39,7 +39,7 @@ class CustomBot(BaseBot):
 
     def on_orderbook(self, orderbook: OrderBook):
         product = orderbook.product
-        if not product == '5_Flights' and not product == '6_Airports':
+        if not product == '5_Flights' and not product == '6_Airport':
             return
         fair_value = m5_fair_value if product == '5_Flights' else m6_fair_value
 
@@ -61,7 +61,7 @@ class CustomBot(BaseBot):
 
         # Open new Orders
         price = round(mean_price * ((1 + spread) if fair_value > mean_price else (1 - spread)))
-        order = OrderRequest(product=orderbook.product,
+        order = OrderRequest(product=product,
                              price=price,
                              volume=1,
                              side=(Side.BUY if fair_value > mean_price else Side.SELL)
